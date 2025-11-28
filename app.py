@@ -6,7 +6,7 @@ import tempfile
 from datetime import datetime
 from pathlib import Path
 from typing import List, Optional
-from aiofiles import open
+from aiofiles import open as async_open
 
 from dotenv import load_dotenv
 import openai
@@ -115,7 +115,7 @@ async def save_note_and_files(
         await client.upload(remote_file_path, local)
 
     local_file_path = Path(tempfile.mkdtemp(prefix="tgmsg_") + note_filename)
-    async with open(local_file_path, "wb") as file:
+    async with async_open(local_file_path, "wb") as file:
         await file.write(note_md.encode("utf-8"))
 
     await client.upload(remote_note_path, local_file_path)
@@ -127,8 +127,9 @@ async def transcribe_audio(local_path: str) -> Optional[str]:
         logger.warning("OPENAI_API_KEY не задан — распознавание недоступно")
         return None
 
+    #FIXME async workaround, should be AsyncOpenAI
     try:
-        async with open(local_path, "rb") as audio_file:
+        with open(local_path, "rb") as audio_file:
             client = openai.OpenAI(
                     api_key=OPENAI_API_KEY,
                     base_url="https://api.proxyapi.ru/openai/v1",
@@ -137,8 +138,7 @@ async def transcribe_audio(local_path: str) -> Optional[str]:
                 model="gpt-4o-mini-transcribe", 
                 file=audio_file
             )
-            text = transcription.text
-            return text
+            return transcription.text
     except Exception as e:
         logger.exception("Ошибка при распознавании аудио: %s", e)
         return None

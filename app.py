@@ -21,6 +21,9 @@ from aiogram.types import (
     ContentType,
     FSInputFile,
 )
+import zoneinfo
+
+zone = zoneinfo.ZoneInfo("Europe/Moscow")
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
@@ -98,13 +101,13 @@ async def save_note_and_files(
     """Сохранить заметку note_md и сопутствующие файлы data_files в папке по текущей дате на WebDAV.
     Возвращает полный удалённый путь к сохранённой заметке.
     """
-    date_str = datetime.utcnow().strftime("%Y-%m-%d")
+    date_str = datetime.now(zone).strftime("%Y-%m-%d")
     remote_date_folder = f"{WEBDAV_ROOT.rstrip('/')}/{date_str}"
     remote_data_folder = f"{remote_date_folder}/data"
     await ensure_folder_exists(client, remote_date_folder)
     await ensure_folder_exists(client, remote_data_folder)
 
-    ts = datetime.now().strftime("%H%M%S")
+    ts = datetime.now(zone).strftime("%H%M%S")
     note_filename = f"note_{ts}.md"
     remote_note_path = f"{remote_date_folder}/{note_filename}"
 

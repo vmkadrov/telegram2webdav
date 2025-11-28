@@ -165,7 +165,7 @@ async def handle_media_and_build_markdown(bot: Bot, message: Message) -> (str, L
         local = base_tmp_dir / f"{photo.file_id}.jpg"
         await download_telegram_file(bot, photo.file_id, str(local))
         saved_files.append(local)
-        inline_links.append(f"![](/data/{local.name})")
+        inline_links.append(f"![](data/{local.name})")
 
     # Документы (включая видео, документы любого рода)
     if message.document:
@@ -174,7 +174,7 @@ async def handle_media_and_build_markdown(bot: Bot, message: Message) -> (str, L
         local = base_tmp_dir / f"{doc.file_id}{ext}"
         await download_telegram_file(bot, doc.file_id, str(local))
         saved_files.append(local)
-        inline_links.append(f"[{doc.file_name or local.name}](/data/{local.name})")
+        inline_links.append(f"[{doc.file_name or local.name}](data/{local.name})")
 
     # Видео
     if message.video:
@@ -182,7 +182,7 @@ async def handle_media_and_build_markdown(bot: Bot, message: Message) -> (str, L
         local = base_tmp_dir / f"{vid.file_id}.mp4"
         await download_telegram_file(bot, vid.file_id, str(local))
         saved_files.append(local)
-        inline_links.append(f"[Видео](/data/{local.name})")
+        inline_links.append(f"[Видео](data/{local.name})")
 
     # Аудио (mp3, ogg и т.п.)
     audio_text = None
@@ -193,7 +193,7 @@ async def handle_media_and_build_markdown(bot: Bot, message: Message) -> (str, L
         local = base_tmp_dir / f"{aud.file_id}{ext}"
         await download_telegram_file(bot, aud.file_id, str(local))
         saved_files.append(local)
-        inline_links.append(f"[Аудио](/data/{local.name})")
+        inline_links.append(f"[Аудио](data/{local.name})")
         audio_local_path = str(local)
 
     # Voice (voice messages)
@@ -202,7 +202,7 @@ async def handle_media_and_build_markdown(bot: Bot, message: Message) -> (str, L
         local = base_tmp_dir / f"{voice.file_id}.ogg"
         await download_telegram_file(bot, voice.file_id, str(local))
         saved_files.append(local)
-        inline_links.append(f"[Voice](/data/{local.name})")
+        inline_links.append(f"[Voice](data/{local.name})")
         audio_local_path = str(local)
 
     # Если есть аудио — попытка распознать
